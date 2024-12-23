@@ -1,13 +1,13 @@
 import { Platform } from 'react-native';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Platform-specific Firebase configurations
+// iOS ve Android Firebase Configurations
 const firebaseConfig = Platform.select({
   ios: {
-    apiKey: 'AlzaSyC4CAR2sBqx7N0zAMzx2rwq8XawnyWkvWM',
+    apiKey: 'AIzaSyC4CAR2sBqx7N0zAMzx2rwq8XawnyWkvWM', // iOS GoogleService-Info.plist'ten
     authDomain: 'mobilgelistirme-5c9bb.firebaseapp.com',
     projectId: 'mobilgelistirme-5c9bb',
     storageBucket: 'mobilgelistirme-5c9bb.firebasestorage.app',
@@ -15,7 +15,7 @@ const firebaseConfig = Platform.select({
     appId: '1:320851901208:ios:e711541b77c51d59adfc6d',
   },
   android: {
-    apiKey: 'AlzaSyDxWsz81yqa6FngJhDCKtdXOgSEow76Ou4',
+    apiKey: 'AIzaSyBbPaLz4RyXLgaOGj9T4AzEwRHAUx20QsQ', // Android google-services.json'dan
     authDomain: 'mobilgelistirme-5c9bb.firebaseapp.com',
     projectId: 'mobilgelistirme-5c9bb',
     storageBucket: 'mobilgelistirme-5c9bb.firebasestorage.app',
@@ -24,10 +24,10 @@ const firebaseConfig = Platform.select({
   },
 });
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase App
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Auth with AsyncStorage persistence
+// Initialize Firebase Auth with AsyncStorage persistence
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });

@@ -3,7 +3,7 @@ import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
 import { db, auth } from '../../firebase/config';
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import LoadingModal from '../../utils/LoadingModal';
 
@@ -11,13 +11,32 @@ export default function HomeScreen(props) {
     const [entityText, setEntityText] = useState('');
     const [entities, setEntities] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false); // Admin kontrolü için state
 
     const navigation = useNavigation();
     const userID = props.extraData.id;
     const entityRef = collection(db, 'entities');
 
     useEffect(() => {
-        setLoading(true); 
+        setLoading(true);
+
+        // Kullanıcı rolünü kontrol et
+        const fetchUserRole = async () => {
+            try {
+                const userDoc = doc(db, 'users', userID);
+                const userSnapshot = await getDoc(userDoc);
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.data();
+                    setIsAdmin(userData.role === 'admin'); // Admin kontrolü
+                }
+            } catch (error) {
+                console.error("Error fetching user role:", error);
+            }
+        };
+
+        fetchUserRole();
+
+        // Entity'leri dinle
         const q = query(
             entityRef,
             where("authorID", "==", userID),
@@ -46,7 +65,7 @@ export default function HomeScreen(props) {
 
     const onAddButtonPress = async () => {
         if (entityText && entityText.length > 0) {
-            setLoading(true); 
+            setLoading(true);
             try {
                 const data = {
                     text: entityText,
@@ -59,10 +78,10 @@ export default function HomeScreen(props) {
             } catch (error) {
                 alert(error.message);
             } finally {
-                setLoading(false); 
+                setLoading(false);
             }
         }
-    }
+    };
 
     const onLogoutPress = async () => {
         try {
@@ -73,18 +92,15 @@ export default function HomeScreen(props) {
         }
     };
 
-    // Function to render each entity item in the FlatList
     const renderEntity = ({ item, index }) => {
         return (
             <View style={styles.entityContainer}>
                 <Text style={styles.entityText}>
-                    {/* Display the entity text */}
                     {index + 1}. {item.text}
                 </Text>
             </View>
         );
     };
-
 
     return (
         <View style={styles.container}>
@@ -105,6 +121,18 @@ export default function HomeScreen(props) {
                     <Text style={styles.buttonText}>Logout</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Admin için özel bölüm */}
+            {isAdmin && (
+                <View style={styles.adminContainer}>
+                    <Text style={styles.adminText}>Welcome, Admin!</Text>
+                    {/* Admin'e özel işlemler buraya eklenebilir */}
+                    <TouchableOpacity style={styles.adminButton}>
+                        <Text style={styles.buttonText}>Admin Action</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
             {entities && (
                 <View style={styles.listContainer}>
                     <FlatList
@@ -115,7 +143,7 @@ export default function HomeScreen(props) {
                     />
                 </View>
             )}
-            <LoadingModal isVisible={loading} /> 
+            <LoadingModal isVisible={loading} />
         </View>
     );
 }

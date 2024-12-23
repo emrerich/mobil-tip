@@ -32,16 +32,18 @@ export default function RegistrationScreen({navigation}) {
                 id: uid,
                 email,
                 fullName,
+                role: "user", // Varsayılan olarak user rolü ekliyoruz
             };
-            
+    
             await setDoc(doc(db, 'users', uid), data);
-            navigation.navigate('Home', {user: data});
+            navigation.navigate('Home', { user: data });
         } catch (error) {
             alert(error.message);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
+    
 
     return (
         <View style={styles.container}>
