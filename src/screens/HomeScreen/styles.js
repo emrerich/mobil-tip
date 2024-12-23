@@ -60,5 +60,17 @@ export default StyleSheet.create({
     entityText: {
         fontSize: 20,
         color: '#333333'
-    }
+    },
+    adminButton: {
+        backgroundColor: '#007bff',
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    
 });
