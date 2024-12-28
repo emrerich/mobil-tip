@@ -25,7 +25,7 @@ const firebaseConfig = Platform.select({
 });
 
 // Initialize Firebase App
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const app= !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firebase Auth with AsyncStorage persistence
 const auth = initializeAuth(app, {
