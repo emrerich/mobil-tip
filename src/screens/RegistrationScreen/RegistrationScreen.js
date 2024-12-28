@@ -46,7 +46,8 @@ export default function RegistrationScreen({navigation}) {
     
 
     return (
-        <View style={styles.container}>
+        <View 
+        style={styles.container}>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
